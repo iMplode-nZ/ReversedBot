@@ -1,4 +1,4 @@
-const { prefex, token } = require('./config.json');
+const { prefix, token } = require('./config.json');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
@@ -10,9 +10,11 @@ client.on('message', messageHandler);
 
 client.login(token);
 
+console.log(prefix);
+
 function messageHandler(message) {
 	console.log(message.content);
-	if (message.content.startsWith(prefex)) {
+	if (message.content.startsWith(prefix)) {
 		const args = message.content.slice(prefix.length).split(' ');
 		const command = args.shift().toLowerCase();
 		console.log('Args: ' + args);
