@@ -1,0 +1,24 @@
+{
+    "name": "ReversedBot",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/iMplode-nZ/ReversedBot.git"
+    },
+    "author": "ReversedGravity",
+    "license": "UNLICENCED",
+    "dependencies": {
+        "discord.js": "^12.2.0"
+    },
+    "devDependencies": {
+        "eslint": "^7.1.0",
+        "eslint-plugin-prettier": "^3.1.3",
+        "lint-staged": "^9.5.0",
+        "prettier": "^1.19.1"
+    }
+}
