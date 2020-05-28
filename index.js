@@ -20,6 +20,10 @@ client.on('message', messageHandler);
 
 client.login(token);
 
+setInterval(() => {
+	console.log("Beep")
+}, 1000);
+
 function messageHandler(message) {
 	if (message.content.startsWith(prefix)) {
 		const args = message.content
