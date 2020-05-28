@@ -29,7 +29,7 @@ module.exports = {
 
 		const userLocation = leaderboard.indexOf(user.id);
 
-		backupLeaderboard(last);
+		backupLeaderboard(last, message);
 
 		if (i == null || isNaN(i)) {
 			if (userLocation == -1) {

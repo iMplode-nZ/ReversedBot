@@ -27,7 +27,7 @@ module.exports = {
 
 		const userLocation = leaderboard.indexOf(user.id);
 
-		backupLeaderboard(last);
+		backupLeaderboard(last, message);
 
 		if (userLocation == -1)
 			return message.reply('User not in leaderboard, can not delete.');

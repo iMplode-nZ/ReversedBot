@@ -80,11 +80,11 @@ function renderLeaderboard(channel, players, client) {
 	channel.send(data, { split: true });
 }
 
-function backupLeaderboard(lb) {
+function backupLeaderboard(lb, msg) {
 	const fs = require('fs');
 	fs.appendFile(
 		'./leaderboard-old.json',
-		`${new Date()}\n${JSON.stringify(lb)}\n`,
+		`${new Date()}: ${msg}\n${JSON.stringify(lb)}\n`,
 		err => {
 			if (err) throw err;
 			console.log('Leaderboard Backuped');

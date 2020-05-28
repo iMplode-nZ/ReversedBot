@@ -36,7 +36,7 @@ module.exports = {
 
 		console.log('Old Leaderboard:\n' + JSON.stringify(last));
 
-		backupLeaderboard(last);
+		backupLeaderboard(last, message);
 
 		last.leaderboards[args[0]] = leaderboard;
 
