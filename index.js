@@ -20,27 +20,21 @@ client.on('message', messageHandler);
 
 client.login(token);
 
-console.log(prefix);
-
 function messageHandler(message) {
-	console.log(message.content);
 	if (message.content.startsWith(prefix)) {
 		const args = message.content
 			.slice(prefix.length)
 			.split(/(?<!\\) +/)
-			.map(a => {
-				console.log(a);
-				return a.replace(/\\ /g, ' ');
-			});
+			.map(a => a.replace(/\\ /g, ' '));
 		const commandName = args.shift().toLowerCase();
-		console.log('Args: ' + args);
-		console.log('Command: ' + commandName);
 		const command =
 			client.commands.get(commandName) ||
 			client.commands.find(
 				cmd => cmd.aliases && cmd.aliases.includes(commandName)
 			);
 		if (!command) return;
+
+		if(message.author.id === '529765788257615893') return message.channel.send("No Commands for <@!529765788257615893>")
 
 		if (command.guildOnly && message.channel.type !== 'text') {
 			return message.reply("I can't execute that command inside DMs!");
@@ -59,7 +53,7 @@ function messageHandler(message) {
 			);
 		}
 		try {
-			command.execute(message, args);
+			command.execute(message, args, client);
 		} catch (error) {
 			console.error(error);
 			message.reply('there was an error trying to execute that command!');
