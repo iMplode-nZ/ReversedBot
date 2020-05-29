@@ -1,8 +1,7 @@
 const {
-    renderLeaderboard,
     writeLeaderboard,
     backupLeaderboard,
-    createLeaderboardReader
+    getChannelFromId
 } = require('../utils');
 
 const lb = require('../leaderboard');
@@ -18,25 +17,18 @@ module.exports = {
         /*=== INSERT ALIASES HERE ===*/
     ],
     usage: '[channel]',
-    execute(message, args, client) {
+    execute(message) {
         if (message.author.id != require('../config.json').owner)
             return message.reply('is not the owner of this bot.');
 
-        const reader = createLeaderboardReader(message, args, client);
-
-        const leaderboardChannel = reader.optionalReadLeaderboard();
-
-        if (leaderboardChannel == null) return;
-
-        const leaderboard = lb.leaderboards[leaderboardChannel];
-
         backupLeaderboard(lb, message);
 
-        /* ==============================================
-           ================ DO SOMETHING ================
-           ============================================== */
-
-        renderLeaderboard(leaderboardChannel, leaderboard, client);
+        for (const x in lb.leaderboards) {
+            if (Object.prototype.hasOwnProperty.call(lb.leaderboards, x)) {
+                const leaderboardChannel = getChannelFromId(x, message.guild);
+                if (leaderboardChannel == null) delete lb.leaderboards[x];
+            }
+        }
 
         writeLeaderboard(lb);
     }
