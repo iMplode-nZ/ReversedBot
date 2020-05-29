@@ -5,6 +5,8 @@ const {
     createLeaderboardReader
 } = require('../utils');
 
+const { maxLeaderboard } = require('../config.json');
+
 const lb = require('../leaderboard.json');
 
 module.exports = {
@@ -56,6 +58,9 @@ module.exports = {
                 }
             }
         }
+
+        if (leaderboard.length > maxLeaderboard)
+            leaderboard.length = maxLeaderboard;
 
         renderLeaderboard(leaderboardChannel, leaderboard);
 

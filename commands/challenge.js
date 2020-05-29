@@ -4,8 +4,7 @@ const {
     createLeaderboardReader
 } = require('../utils');
 
-const maxDifferenceLeaderboard = 3;
-const maxChallengeNew = 3;
+const { maxDifferenceLeaderboard, maxChallengeNew } = require('../config.json');
 
 const lb = require('../leaderboard');
 
@@ -16,7 +15,7 @@ module.exports = {
     args: true,
     delete: true,
     aliases: ['1v1', 'vs', 'fight'],
-    usage: '[channel] ',
+    usage: '[channel] <user> [reason]',
     execute(message, args, client) {
         const reader = createLeaderboardReader(message, args, client);
 
@@ -46,6 +45,8 @@ module.exports = {
 
         if (defender.id == challenger.id)
             return message.reply('you can not challenge yourself.');
+
+        let reason = reader.readUntilEmpty() || '';
 
         const defenderLocation = leaderboard.indexOf(defender.id);
 
@@ -95,7 +96,8 @@ module.exports = {
             challenger.id,
             defender.id,
             challengerLocation,
-            defenderLocation
+            defenderLocation,
+            reason
         ];
 
         challenges[defender.id].push(challenge());

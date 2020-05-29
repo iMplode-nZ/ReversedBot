@@ -2,6 +2,8 @@ const fs = require('fs');
 
 const { prefix, token, owner } = require('./config.json');
 const Discord = require('discord.js');
+const { splitFirstWhitespace } = require('./utils');
+
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const commandFiles = fs
@@ -22,11 +24,11 @@ client.login(token);
 
 function messageHandler(message) {
     if (message.content.startsWith(prefix)) {
-        const args = message.content
-            .slice(prefix.length)
-            .split(/(?<!\\) +/)
-            .map(a => a.replace(/\\ /g, ' '));
+        let args = splitFirstWhitespace(message.content);
+        console.log(args);
+        args[0] = args[0].slice(prefix.length);
         const commandName = args.shift().toLowerCase();
+        args = args[0] ? args[0] : '';
         const command =
             client.commands.get(commandName) ||
             client.commands.find(

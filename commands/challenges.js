@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 
-const { createReader } = require('../utils');
+const { createReader, generateChallenge } = require('../utils');
 
 const lb = require('../leaderboard');
 
@@ -24,22 +24,14 @@ module.exports = {
             )
             .setTimestamp();
 
-        function generateChallenge(a) {
-            embed.addField(
-                '***Challenge:***',
-                `\`Time Created:\` ${new Date(a[0])}
-\`Leaderboard:\` ${a[1]}
-\`Challenger:\` <@${a[2]}>
-\`Defender:\` <@${a[3]}>`
-            );
-        }
-
         if (lb.challenges[user.id] != null)
-            for (const a of lb.challenges[user.id]) generateChallenge(a);
+            for (const a of lb.challenges[user.id]) generateChallenge(a, embed);
 
         if (lb.defends[user.id] != null)
-            for (const a of lb.defends[user.id]) generateChallenge(a);
+            for (const a of lb.defends[user.id]) generateChallenge(a, embed);
 
-        message.channel.send(embed);
+        message.channel
+            .send(new Discord.MessageEmbed())
+            .then(x => x.edit(embed));
     }
 };

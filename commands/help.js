@@ -1,3 +1,5 @@
+const { createReader } = require('../utils');
+
 const { prefix } = require('../config.json');
 
 module.exports = {
@@ -5,11 +7,13 @@ module.exports = {
     description: 'List all of my commands or info about a specific command.',
     usage: '[command name]',
     aliases: ['commands'],
-    execute(message, args) {
+    execute(message, args, client) {
         const data = [];
         const { commands } = message.client;
 
-        if (!args.length) {
+        const reader = createReader(message, args, client);
+
+        if (!args) {
             data.push("Here's a list of all my commands:");
             data.push(
                 commands
@@ -23,7 +27,7 @@ module.exports = {
 
             return message.channel.send(data, { split: true });
         }
-        const name = args[0].toLowerCase();
+        const name = reader.readText().toLowerCase();
         const command =
             commands.get(name) ||
             commands.find(c => c.aliases && c.aliases.includes(name));

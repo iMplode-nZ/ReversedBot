@@ -1,4 +1,5 @@
 const lb = require('./leaderboard');
+const Discord = require('discord.js');
 
 function getUserFromMention(mention, client) {
     if (!mention) return;
@@ -35,24 +36,29 @@ function getEmoji(name, client) {
 function renderLeaderboard(channel, players) {
     channel.bulkDelete(100, true);
 
+    const embed = new Discord.MessageEmbed()
+        .setColor('#0099ff')
+        .setTitle(`***Leaderboard For ${channel.name}***`);
+
     let data = '';
 
     for (let i = 0; i < players.length; i++) {
         const user = players[i];
         const ping = ` <@${user}>`;
-        let before = `\`${i + 1}\``;
-        let after = '';
+        const pos = `\`${i + 1}:\``;
+        let placeMark = '';
         if (i === 0) {
-            after = '🥇';
+            placeMark = '🥇';
         } else if (i === 1) {
-            after = '🥈';
+            placeMark = '🥈';
         } else if (i === 2) {
-            after = '🥉';
+            placeMark = '🥉';
         }
-        data += `${before}${ping}${after}\n`;
+        data += `*** ${pos} *** ${ping} ${placeMark}\n`;
     }
+    embed.setDescription(data);
 
-    channel.send('Rendering Leaderboard...').then(x => x.edit(data));
+    channel.send(new Discord.MessageEmbed()).then(x => x.edit(embed));
 }
 
 function backupLeaderboard(msg) {
@@ -75,30 +81,51 @@ function writeLeaderboard() {
     });
 }
 
-function createReader(message, args, client) {
+function splitFirstWhitespace(x) {
+    return x.split(/\s+([^]+)/);
+}
+
+function createReader(message, a, client) {
+    let args = a;
+
     return {
         readUser() {
             if (args.length == 0) return;
-            const user = getUserFromMention(args[0], client);
+            const split = splitFirstWhitespace(args);
+            const user = getUserFromMention(split[0], client);
             if (user != null) {
-                args.shift();
+                args = split[1];
                 return user;
+            } else {
+                const ou = client.users.cache.get(split[0]);
+                if (ou != null) {
+                    args = split[1];
+                    return ou;
+                }
             }
         },
         readChannel() {
             if (args.length == 0) return;
-            const channel = getChannelFromId(args[0], message.guild);
+            const split = splitFirstWhitespace(args);
+            const channel = getChannelFromId(split[0], message.guild);
             if (channel != null) {
-                args.shift();
+                args = split[1];
                 return channel;
             }
         },
         readText() {
-            return args.shift();
+            const split = splitFirstWhitespace(args);
+            args = split[1];
+            return split[0];
         },
         readInt() {
-            const at = args[0] && parseInt(args.shift());
+            const at = args.length && parseInt(this.readText());
             return isNaN(at) ? null : at;
+        },
+        readUntilEmpty() {
+            const x = args;
+            args = '';
+            return x;
         }
     };
 }
@@ -135,6 +162,18 @@ function createLeaderboardReader(message, args, client) {
     return reader;
 }
 
+function generateChallenge(a, embed) {
+    embed.addField(
+        '***Challenge:***',
+        `**\`Time Created:\`** ${new Date(a[0])}
+**\`Leaderboard:\`** ${a[1]}
+**\`Challenger:\`** <@${a[2]}>
+**\`Defender:\`** <@${a[3]}>${
+            a[6] ? `\n**\`Message from Challenger:\`** ${a[6]}` : ''
+        }`
+    );
+}
+
 module.exports = {
     getEmoji,
     renderLeaderboard,
@@ -143,5 +182,7 @@ module.exports = {
     getChannelFromId,
     getUserFromMention,
     createReader,
-    createLeaderboardReader
+    createLeaderboardReader,
+    generateChallenge,
+    splitFirstWhitespace
 };
