@@ -10,17 +10,12 @@ module.exports = {
     name: 'lint',
     description: 'Clears useless cache elements.',
     guildOnly: true,
-    adminOnly: true,
+    adminOnly: 'owner',
     delete: true,
     hidden: true,
-    aliases: [
-        /*=== INSERT ALIASES HERE ===*/
-    ],
+    aliases: [],
     usage: '[channel]',
     execute(message) {
-        if (message.author.id != require('../config.json').owner)
-            return message.reply('is not the owner of this bot.');
-
         backupLeaderboard(lb, message);
 
         for (const x in lb.leaderboards) {

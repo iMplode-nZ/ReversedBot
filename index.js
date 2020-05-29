@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const { prefix, token } = require('./config.json');
+const { prefix, token, owner } = require('./config.json');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -42,13 +42,18 @@ function messageHandler(message) {
         if (command.guildOnly && message.channel.type !== 'text')
             return message.reply("I can't execute that command inside DMs!");
 
-        if (
-            command.adminOnly &&
-            !(command.adminOnly == 'mod'
-                ? message.member.hasPermission('MANAGE_MESSAGES')
-                : message.member.hasPermission('ADMINISTRATOR'))
-        )
-            return message.reply('is not an admin.');
+        if (message.author.id != owner) {
+            if (
+                command.adminOnly &&
+                !(command.adminOnly == 'mod'
+                    ? message.member.hasPermission('MANAGE_MESSAGES')
+                    : message.member.hasPermission('ADMINISTRATOR'))
+            )
+                return message.reply('is not an admin.');
+
+            if (command.adminOnly == 'owner')
+                return message.reply('is not the owner of this bot.');
+        }
 
         if (command.args && !args.length) {
             let reply = `You didn't provide any arguments, ${message.author}!`;
