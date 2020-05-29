@@ -11,7 +11,7 @@ module.exports = {
     name: 'delete',
     description: 'Deletes a player.',
     guildOnly: true,
-    adminOnly: true,
+    adminOnly: 'mod',
     args: true,
     delete: true,
     aliases: ['remove'],

@@ -5,6 +5,8 @@ const {
     createLeaderboardReader
 } = require('../utils');
 
+const lb = require('../leaderboard');
+
 module.exports = {
     name: 'lint',
     description: 'Clears useless cache elements.',
@@ -20,17 +22,15 @@ module.exports = {
         if (message.author.id != require('../config.json').owner)
             return message.reply('is not the owner of this bot.');
 
-        const last = require('../leaderboard.json');
-
         const reader = createLeaderboardReader(message, args, client);
 
         const leaderboardChannel = reader.optionalReadLeaderboard();
 
         if (leaderboardChannel == null) return;
 
-        const leaderboard = last.leaderboards[leaderboardChannel];
+        const leaderboard = lb.leaderboards[leaderboardChannel];
 
-        backupLeaderboard(last, message);
+        backupLeaderboard(lb, message);
 
         /* ==============================================
            ================ DO SOMETHING ================
@@ -38,6 +38,6 @@ module.exports = {
 
         renderLeaderboard(leaderboardChannel, leaderboard, client);
 
-        writeLeaderboard(last);
+        writeLeaderboard(lb);
     }
 };
