@@ -82,7 +82,10 @@ function writeLeaderboard() {
 }
 
 function splitFirstWhitespace(x) {
-    return x.split(/\s+([^]+)/);
+    const split = x.split(/\s+([^]+)/);
+    if (split.length == 0) split.push('');
+    if (split.length == 1) split.push('');
+    return split;
 }
 
 function createReader(message, a, client) {
@@ -114,15 +117,18 @@ function createReader(message, a, client) {
             }
         },
         readText() {
+            if (args.length == 0) return;
             const split = splitFirstWhitespace(args);
             args = split[1];
             return split[0];
         },
         readInt() {
-            const at = args.length && parseInt(this.readText());
-            return isNaN(at) ? null : at;
+            if (args.length == 0) return;
+            const at = parseInt(this.readText());
+            return at == null || isNaN(at) ? null : at;
         },
         readUntilEmpty() {
+            console.log(args);
             const x = args;
             args = '';
             return x;

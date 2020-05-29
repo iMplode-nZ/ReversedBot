@@ -6,6 +6,7 @@ module.exports = {
     description: 'Refreshes all leaderboards.',
     guildOnly: true,
     adminOnly: 'mod',
+    delete: true,
     usage: '',
     execute(message) {
         for (const x in lb.leaderboards) {
