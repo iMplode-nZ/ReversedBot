@@ -1,41 +1,44 @@
 const {
-	getUserFromMention,
-	getChannelFromId,
-	parseLeaderboard,
-	renderLeaderboard,
-	writeLeaderboard,
-	backupLeaderboard
+    renderLeaderboard,
+    writeLeaderboard,
+    backupLeaderboard,
+    createLeaderboardReader
 } = require('../utils');
 
 module.exports = {
-	name: 'delete',
-	description: 'Deletes a player.',
-	guildOnly: true,
-	usage: '<channel> <player>',
-	execute(message, args, client) {
-		const last = require('../leaderboard.json');
+    name: 'delete',
+    description: 'Deletes a player.',
+    guildOnly: true,
+    adminOnly: true,
+    args: true,
+    aliases: ['remove'],
+    usage: '[channel] <player>',
+    execute(message, args, client) {
+        const last = require('../leaderboard.json');
 
-		const leaderboardChannel = parseLeaderboard(message, args[0]);
+        const reader = createLeaderboardReader(message, args, client);
 
-		if (leaderboardChannel == null) return;
+        const leaderboardChannel = reader.optionalReadLeaderboard();
 
-		const leaderboard = last.leaderboards[args[0]];
+        if (leaderboardChannel == null) return;
 
-		const user = getUserFromMention(args[1], client);
+        const user = reader.readUser();
 
-		if (user == null) return message.reply('Invalid user.');
+        const leaderboard = last.leaderboards[leaderboardChannel];
 
-		const userLocation = leaderboard.indexOf(user.id);
+        if (user == null) return message.reply('Invalid user.');
 
-		backupLeaderboard(last, message);
+        const userLocation = leaderboard.indexOf(user.id);
 
-		if (userLocation == -1)
-			return message.reply('User not in leaderboard, can not delete.');
+        backupLeaderboard(last, message);
 
-		leaderboard.splice(userLocation, 1);
+        if (userLocation == -1)
+            return message.reply('User not in leaderboard, can not delete.');
 
-		renderLeaderboard(leaderboardChannel, leaderboard, client);
+        leaderboard.splice(userLocation, 1);
 
-		writeLeaderboard(last);
-	}
+        renderLeaderboard(leaderboardChannel, leaderboard, client);
+
+        writeLeaderboard(last);
+    }
 };
