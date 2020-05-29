@@ -52,7 +52,7 @@ function renderLeaderboard(channel, players) {
         data += `${before}${ping}${after}\n`;
     }
 
-    channel.send(data, { split: true });
+    channel.send('Rendering Leaderboard...').then(x => x.edit(data));
 }
 
 function backupLeaderboard(msg) {

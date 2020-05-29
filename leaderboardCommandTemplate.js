@@ -36,6 +36,6 @@ module.exports = {
 
         renderLeaderboard(leaderboardChannel, leaderboard, client);
 
-        writeLeaderboard(lb);
+        writeLeaderboard();
     }
 };
