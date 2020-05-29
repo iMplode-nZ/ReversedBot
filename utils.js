@@ -1,3 +1,5 @@
+const lb = require('./leaderboard');
+
 function getUserFromMention(mention, client) {
     if (!mention) return;
 
@@ -30,7 +32,7 @@ function getEmoji(name, client) {
     return client.emojis.cache.find(emoji => emoji.name === name);
 }
 
-function renderLeaderboard(channel, players, client) {
+function renderLeaderboard(channel, players) {
     channel.bulkDelete(100, true);
 
     let data = '';
@@ -53,7 +55,7 @@ function renderLeaderboard(channel, players, client) {
     channel.send(data, { split: true });
 }
 
-function backupLeaderboard(lb, msg) {
+function backupLeaderboard(msg) {
     const fs = require('fs');
     fs.appendFile(
         './leaderboard-old.json',
@@ -65,7 +67,7 @@ function backupLeaderboard(lb, msg) {
     );
 }
 
-function writeLeaderboard(lb) {
+function writeLeaderboard() {
     const fs = require('fs');
     fs.writeFile('./leaderboard.json', JSON.stringify(lb), err => {
         if (err) throw err;

@@ -5,24 +5,25 @@ const {
     createLeaderboardReader
 } = require('../utils');
 
+const lb = require('../leaderboard.json');
+
 module.exports = {
     name: 'add',
     description: 'Moves or adds a player.',
     guildOnly: true,
-    adminOnly: true,
+    adminOnly: 'mod',
     args: true,
+    delete: true,
     aliases: ['insert'],
     usage: '[channel] <player> [index]',
     execute(message, args, client) {
-        const last = require('../leaderboard.json');
-
         const reader = createLeaderboardReader(message, args, client);
 
         const leaderboardChannel = reader.optionalReadLeaderboard();
 
         if (leaderboardChannel == null) return;
 
-        const leaderboard = last.leaderboards[leaderboardChannel];
+        const leaderboard = lb.leaderboards[leaderboardChannel];
 
         const user = reader.readUser();
 
@@ -32,7 +33,7 @@ module.exports = {
 
         const userLocation = leaderboard.indexOf(user.id);
 
-        backupLeaderboard(last, message);
+        backupLeaderboard(message);
 
         if (i == null) {
             if (userLocation == -1) {
@@ -56,8 +57,8 @@ module.exports = {
             }
         }
 
-        renderLeaderboard(leaderboardChannel, leaderboard, client);
+        renderLeaderboard(leaderboardChannel, leaderboard);
 
-        writeLeaderboard(last);
+        writeLeaderboard();
     }
 };

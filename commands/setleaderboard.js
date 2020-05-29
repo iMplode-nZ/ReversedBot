@@ -5,6 +5,8 @@ const {
     createLeaderboardReader
 } = require('../utils');
 
+const lb = require('../leaderboard');
+
 module.exports = {
     name: 'setleaderboard',
     description:
@@ -12,10 +14,9 @@ module.exports = {
     guildOnly: true,
     adminOnly: true,
     args: true,
+    delete: true,
     usage: '[channel] <players>+',
     execute(message, args, client) {
-        const last = require('../leaderboard.json');
-
         const reader = createLeaderboardReader(message, args, client);
 
         const leaderboardChannel = reader.optionalReadLeaderboard();
@@ -35,14 +36,14 @@ module.exports = {
         if (leaderboard.length == null)
             return message.reply('No users were provided.');
 
-        renderLeaderboard(leaderboardChannel, leaderboard, client);
+        renderLeaderboard(leaderboardChannel, leaderboard);
 
-        console.log('Old Leaderboard:\n' + JSON.stringify(last));
+        console.log('Old Leaderboard:\n' + JSON.stringify(lb));
 
-        backupLeaderboard(last, message);
+        backupLeaderboard(message);
 
-        last.leaderboards[leaderboardChannel] = leaderboard;
+        lb.leaderboards[leaderboardChannel] = leaderboard;
 
-        writeLeaderboard(last);
+        writeLeaderboard();
     }
 };

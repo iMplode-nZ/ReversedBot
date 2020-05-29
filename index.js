@@ -39,11 +39,15 @@ function messageHandler(message) {
                 'No Commands for <@!529765788257615893>'
             );
 
-        if (command.guildOnly && message.channel.type !== 'text') {
+        if (command.guildOnly && message.channel.type !== 'text')
             return message.reply("I can't execute that command inside DMs!");
-        }
 
-        if (command.adminOnly && !message.member.hasPermission('ADMINISTRATOR'))
+        if (
+            command.adminOnly &&
+            !(command.adminOnly == 'mod'
+                ? message.member.hasPermission('MANAGE_MESSAGES')
+                : message.member.hasPermission('ADMINISTRATOR'))
+        )
             return message.reply('is not an admin.');
 
         if (command.args && !args.length) {
@@ -61,5 +65,7 @@ function messageHandler(message) {
             console.error(error);
             message.reply('there was an error trying to execute that command!');
         }
+
+        if (command.delete) message.delete();
     }
 }
