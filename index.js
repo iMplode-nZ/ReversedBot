@@ -3,6 +3,7 @@ const fs = require('fs');
 const { prefix, token, owner } = require('./config.json');
 const Discord = require('discord.js');
 const { splitFirstWhitespace } = require('./utils');
+const connect = require('./connect');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -23,6 +24,8 @@ client.on('message', messageHandler);
 client.login(token);
 
 function messageHandler(message) {
+    if (message.author.bot) return;
+    connect.intercept(message);
     if (message.content.startsWith(prefix)) {
         let args = splitFirstWhitespace(message.content);
         console.log(args);
@@ -73,6 +76,6 @@ function messageHandler(message) {
             message.reply('there was an error trying to execute that command!');
         }
 
-        if (command.delete) message.delete();
+        if (command.delete && !message.deleted) message.delete();
     }
 }
