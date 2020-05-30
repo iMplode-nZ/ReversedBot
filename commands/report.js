@@ -113,6 +113,11 @@ module.exports = {
 
         const challenger = defender == winner ? looser : winner;
 
+        if (challenge[5] == null)
+            return message.reply(
+                `Challenge has not been accepted by ${defender}. Please contact ${defender} first.`
+            );
+
         backupLeaderboard(lb, message);
 
         // Delete Challenge
@@ -146,7 +151,7 @@ module.exports = {
 
         const ts = Date.now();
 
-        const createResult = isReport => {
+        const createResult = () => {
             function getName(x) {
                 return message.guild.members.cache.get(x.id).displayName;
             }
@@ -157,27 +162,34 @@ module.exports = {
                 .setTitle(
                     `Result for Challenge: ${getName(challenger)} vs ${getName(
                         defender
-                    )}`
+                    )} in ${leaderboardChannel.name}`
                 )
                 .setDescription(text);
-            if (isReport)
-                embed.addField(
-                    '\u200B',
-                    `||${challenge[0]} ${challenger} ${defender} ${winner} ${looser} ${winnerScore} ${looserScore} ${forfeit}||`
-                );
 
             return embed;
         };
 
-        [
-            [reportChannel, true],
-            [challengeHistoryChannel, false]
-        ].forEach(a => {
-            message.guild.channels.cache
-                .get(a[0])
-                .send(new Discord.MessageEmbed().setTitle('Loading...'))
-                .then(x => setTimeout(() => x.edit(createResult(a[1])), 1000));
-        });
+        message.guild.channels.cache
+            .get(challengeHistoryChannel)
+            .send(new Discord.MessageEmbed().setTitle('Loading...'))
+            .then(x => setTimeout(() => x.edit(createResult()), 1000));
+
+        message.guild.channels.cache
+            .get(reportChannel)
+            .send(
+                'Loading...',
+                new Discord.MessageEmbed().setTitle('Loading...')
+            )
+            .then(x =>
+                setTimeout(
+                    () =>
+                        x.edit(
+                            `||${leaderboardChannel} ${challenge[0]} ${challenger} ${defender} ${winner} ${looser} ${winnerScore} ${looserScore} ${forfeit}||`,
+                            createResult()
+                        ),
+                    1000
+                )
+            );
 
         renderLeaderboard(leaderboardChannel, leaderboard, client);
 

@@ -39,11 +39,6 @@ function messageHandler(message) {
             );
         if (!command) return;
 
-        if (message.author.id === '529765788257615893')
-            return message.channel.send(
-                'No Commands for <@!529765788257615893>'
-            );
-
         if (command.guildOnly && message.channel.type !== 'text')
             return message.reply("I can't execute that command inside DMs!");
 
@@ -76,6 +71,7 @@ function messageHandler(message) {
             message.reply('there was an error trying to execute that command!');
         }
 
-        if (command.delete && !message.deleted) message.delete();
+        if (command.delete && message != null && !message.deleted)
+            message.delete();
     }
 }

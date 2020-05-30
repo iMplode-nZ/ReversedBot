@@ -42,6 +42,6 @@ module.exports = {
         );
         message.channel
             .send(new Discord.MessageEmbed())
-            .then(x => x.edit(embed));
+            .then(x => setTimeout(() => x.edit(embed), 1000));
     }
 };

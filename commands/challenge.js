@@ -98,7 +98,7 @@ module.exports = {
         }
         if (defends[defender.id])
             for (let x of defends[defender.id]) {
-                if (x[3] == defender.id)
+                if (x[3] == challenger.id)
                     return message.reply(
                         `you have been challenged by ${defender}; you can not challenge a person if they challenged you and you have not accepted yet.`
                     );

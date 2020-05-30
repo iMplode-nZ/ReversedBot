@@ -171,7 +171,7 @@ function createLeaderboardReader(message, args, client) {
 
 function generateChallenge(a, embed) {
     embed.addField(
-        '***Challenge:***',
+        `***Challenge${a[5] == null ? '' : ' (Accepted)'}:***`,
         `**\`Time Created:\`** ${new Date(a[0])}
 **\`Leaderboard:\`** ${a[1]}
 **\`Challenger:\`** <@${a[2]}>

@@ -4,6 +4,7 @@ let wh = null;
 
 function intercept(message) {
     if (connect != null && connect.input == message.author) {
+        if (message == null) return;
         if (message.deleted) return;
         if (connect.output == 'bot') {
             message.channel.send(message.content);
@@ -23,10 +24,9 @@ function intercept(message) {
 
 async function webhook(user, channel, useNick = false, shouldSwitch = false) {
     console.log('Creating Webhook...');
-    console.log(await channel.guild.members.fetch(user.id));
     const x = await channel.createWebhook(
         useNick
-            ? (await channel.guild.members.fetch(user.id)).nickname
+            ? (await channel.guild.members.fetch(user.id)).displayName
             : user.username,
         {
             avatar: user.displayAvatarURL({ format: 'png', dynamic: true })
@@ -45,6 +45,7 @@ function bot() {
 
 function stop() {
     connect = null;
+    if (wh == null) return;
     wh.delete();
     wh = null;
 }
