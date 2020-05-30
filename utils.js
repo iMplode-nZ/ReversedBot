@@ -34,6 +34,8 @@ function getEmoji(name, client) {
 }
 
 function renderLeaderboard(channel, players) {
+    if (players == undefined) return;
+
     channel.bulkDelete(100, true);
 
     const embed = new Discord.MessageEmbed()
@@ -128,7 +130,6 @@ function createReader(message, a, client) {
             return at == null || isNaN(at) ? null : at;
         },
         readUntilEmpty() {
-            console.log(args);
             const x = args;
             args = '';
             return x;
@@ -175,7 +176,7 @@ function generateChallenge(a, embed) {
 **\`Leaderboard:\`** ${a[1]}
 **\`Challenger:\`** <@${a[2]}>
 **\`Defender:\`** <@${a[3]}>${
-            a[6] ? `\n**\`Message from Challenger:\`** ${a[6]}` : ''
+            a[4] ? `\n**\`Message from Challenger:\`** ${a[4]}` : ''
         }`
     );
 }

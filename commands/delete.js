@@ -27,6 +27,8 @@ module.exports = {
 
         const leaderboard = lb.leaderboards[leaderboardChannel];
 
+        if (leaderboard == null) return message.reply('Invalid leaderboard.');
+
         if (user == null) return message.reply('Invalid user.');
 
         const userLocation = leaderboard.indexOf(user.id);

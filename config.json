@@ -2,7 +2,9 @@
 	"prefix": "!",
 	"token": "NzE1Mjg5NDYwNDIxNjg5NDA4.Xs7DkQ.0dJqefs5nod7k44TTFXVfIDeyHw",
 	"owner": "386324581289295872",
-	"maxLeaderboard": "16",
+	"maxLeaderboard": 15,
 	"maxDifferenceLeaderboard": 3,
-	"maxChallengeNew": 3
+	"maxChallengeNew": 3,
+	"reportChannel": 716069619789463652,
+	"challengeHistoryChannel": 714524600691720244
 }

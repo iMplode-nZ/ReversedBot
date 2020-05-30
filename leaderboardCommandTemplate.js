@@ -28,6 +28,8 @@ module.exports = {
 
         const leaderboard = lb.leaderboards[leaderboardChannel];
 
+        if (leaderboard == null) return message.reply('Invalid leaderboard.');
+
         backupLeaderboard(lb, message);
 
         /* ==============================================

@@ -80,7 +80,7 @@ module.exports = {
 
         const defends = lb.defends;
 
-        const time = new Date().getTime();
+        const time = Date.now();
 
         if (!Object.prototype.hasOwnProperty.call(challenges, defender.id)) {
             challenges[defender.id] = [];
@@ -90,13 +90,24 @@ module.exports = {
             defends[challenger.id] = [];
         }
 
+        for (let x of defends[challenger.id]) {
+            if (x[3] == defender.id)
+                return message.reply(
+                    `you have already challenged ${defender}; you can not challenge a person twice before one challenge is resolved.`
+                );
+        }
+        for (let x of defends[defender.id]) {
+            if (x[3] == defender.id)
+                return message.reply(
+                    `you have been challenged by ${defender}; you can not challenge a person if they challenged you and you have not accepted yet.`
+                );
+        }
+
         const challenge = () => [
             time,
             `${channel}`,
             challenger.id,
             defender.id,
-            challengerLocation,
-            defenderLocation,
             reason
         ];
 
