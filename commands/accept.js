@@ -31,6 +31,11 @@ module.exports = {
 
         const defender = message.author;
 
+        if (!lb.challenges[defender.id] || !lb.defends[challenger.id])
+            return message.reply(
+                `Could not find a challenge including ${challenger} in ${leaderboardChannel}.`
+            );
+
         const challenge = lb.challenges[defender.id].find(
             a => a[1] == leaderboardChannel.toString() && a[2] == challenger.id
         );
