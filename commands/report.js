@@ -20,7 +20,6 @@ module.exports = {
     description: 'Reports a win or loss.',
     guildOnly: true,
     args: true,
-    hidden: true,
     aliases: ['result'],
     usage:
         '[channel] <winner> <looser> [forfeit] <winner-score> <looser-score> [text]',
@@ -50,18 +49,35 @@ module.exports = {
         let forfeit = false;
 
         let winnerScore = null;
+        let looserScore = null;
 
-        if (isNaN(parseInt(f))) {
-            forfeit = true;
-            winnerScore = reader.readInt();
+        const sm = /^(\d+)-(\d+)$/;
+
+        const match = f.match(sm);
+
+        if (match == null) {
+            if (isNaN(parseInt(f))) {
+                forfeit = true;
+                const wl = reader.readText();
+                const nfMatch = wl.match(sm);
+                if (nfMatch == null) {
+                    winnerScore = isNaN(parseInt(wl)) ? null : parseInt(wl);
+                    looserScore = reader.readInt();
+                } else {
+                    winnerScore = parseInt(nfMatch[1]);
+                    looserScore = parseInt(nfMatch[2]);
+                }
+            } else {
+                winnerScore = parseInt(f);
+                looserScore = reader.readInt();
+            }
         } else {
-            winnerScore = parseInt(forfeit);
+            winnerScore = parseInt(match[1]);
+            looserScore = parseInt(match[2]);
         }
 
         if (winnerScore == null)
             return message.reply('Invalid arguments list.');
-
-        const looserScore = reader.readInt();
 
         if (looserScore == null)
             return message.reply('Invalid arguments list.');
@@ -69,17 +85,19 @@ module.exports = {
         let text = reader.readUntilEmpty();
 
         if (text == '')
-            text = `${winner} defeats ${looser} ${winnerScore} - ${looserScore}.${
-                forfeit ? ` then ${looser} forfeits.` : ''
+            text = `${winner} defeats ${looser} ${winnerScore} - ${looserScore}${
+                forfeit ? `, then ${looser} forfeits.` : '.'
             }`;
 
         let defender = winner;
 
-        let challengeIndex = lb.challenges[defender.id].findIndex(
-            elem => elem[2] == looser.id
-        );
+        let challengeIndex = -1;
+        if (lb.challenges[defender.id] != null)
+            challengeIndex = lb.challenges[defender.id].findIndex(
+                elem => elem[2] == looser.id
+            );
 
-        if (challengeIndex == -1) {
+        if (challengeIndex == -1 && lb.challenges[looser.id] != null) {
             defender = looser;
             challengeIndex = lb.challenges[defender.id].findIndex(
                 elem => elem[2] == winner.id
@@ -101,7 +119,9 @@ module.exports = {
 
         lb.challenges[defender.id].splice(challengeIndex, 1);
 
-        lb.defends[challenger.id].filter(a => a != challenge);
+        lb.defends[challenger.id] = lb.defends[challenger.id].filter(
+            a => !a.every((x, i) => x == challenge[i])
+        );
 
         // Update Leaderboard
 
@@ -114,7 +134,7 @@ module.exports = {
                 leaderboard.push(winner.id);
         } else if (winnerLocation == -1) {
             leaderboard.splice(looserLocation, 0, winner.id);
-        } else if (looserLocation != -1 && winnerLocation < looserLocation) {
+        } else if (looserLocation != -1 && winnerLocation > looserLocation) {
             leaderboard.splice(winnerLocation, 1);
             leaderboard.splice(looserLocation, 0, winner.id);
         }
@@ -126,7 +146,7 @@ module.exports = {
 
         const ts = Date.now();
 
-        const createResult = () => {
+        const createResult = isReport => {
             function getName(x) {
                 return message.guild.members.cache.get(x.id).displayName;
             }
@@ -139,20 +159,24 @@ module.exports = {
                         defender
                     )}`
                 )
-                .setDescription(text)
-                .addField(
+                .setDescription(text);
+            if (isReport)
+                embed.addField(
                     '\u200B',
-                    `${challenger} ${defender} ${winner} ${looser} ${winnerScore}-${looserScore} ${forfeit}`
+                    `||${challenge[0]} ${challenger} ${defender} ${winner} ${looser} ${winnerScore} ${looserScore} ${forfeit}||`
                 );
 
             return embed;
         };
 
-        [reportChannel, challengeHistoryChannel].forEach(a => {
+        [
+            [reportChannel, true],
+            [challengeHistoryChannel, false]
+        ].forEach(a => {
             message.guild.channels.cache
-                .get(a)
-                .send(new Discord.MessageEmbed())
-                .then(x => x.edit(createResult()));
+                .get(a[0])
+                .send(new Discord.MessageEmbed().setTitle('Loading...'))
+                .then(x => setTimeout(() => x.edit(createResult(a[1])), 1000));
         });
 
         renderLeaderboard(leaderboardChannel, leaderboard, client);

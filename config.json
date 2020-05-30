@@ -5,6 +5,6 @@
 	"maxLeaderboard": 15,
 	"maxDifferenceLeaderboard": 3,
 	"maxChallengeNew": 3,
-	"reportChannel": 716069619789463652,
-	"challengeHistoryChannel": 714524600691720244
+	"reportChannel": "716069619789463652",
+	"challengeHistoryChannel": "714524600691720244"
 }

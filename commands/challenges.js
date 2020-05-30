@@ -19,17 +19,27 @@ module.exports = {
         const embed = new Discord.MessageEmbed()
             .setColor('#000000')
             .setTitle(`Challenges:`)
-            .setDescription(
-                `All challenges for ${user} that are currently pending.`
-            )
             .setTimestamp();
 
+        let doesHaveChallenge = false;
+
         if (lb.challenges[user.id] != null)
-            for (const a of lb.challenges[user.id]) generateChallenge(a, embed);
+            for (const a of lb.challenges[user.id]) {
+                doesHaveChallenge = true;
+                generateChallenge(a, embed);
+            }
 
         if (lb.defends[user.id] != null)
-            for (const a of lb.defends[user.id]) generateChallenge(a, embed);
+            for (const a of lb.defends[user.id]) {
+                doesHaveChallenge = true;
+                generateChallenge(a, embed);
+            }
 
+        embed.setDescription(
+            doesHaveChallenge
+                ? `All challenges for ${user} that are currently pending.`
+                : `${user} has no challenges currently pending.`
+        );
         message.channel
             .send(new Discord.MessageEmbed())
             .then(x => x.edit(embed));
