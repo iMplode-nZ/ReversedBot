@@ -224,18 +224,18 @@ function Ranking(channel, leaderboard) {
 }
 
 function Leaderboard(channel, lbInitType = null) {
-    let leaderboard = lb[channel];
+    let leaderboard = lb.leaderboards[channel];
 
     if (leaderboard == null) {
-        if (lbInitType.length != null) {
-            lb[channel] = {
+        if (lbInitType != null && lbInitType.length != null) {
+            lb.leaderboards[channel] = {
                 isRanking: true,
                 rankings: {}
             };
             leaderboard = lb[channel];
         } else if (lbInitType == 'simple') {
-            lb[channel] = [];
-            leaderboard = lb[channel];
+            lb.leaderboards[channel] = [];
+            leaderboard = lb.leaderboards[channel];
         } else return leaderboard;
     }
 

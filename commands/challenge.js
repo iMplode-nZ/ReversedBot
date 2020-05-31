@@ -29,6 +29,8 @@ module.exports = {
 
         const leaderboard = Leaderboard(channel);
 
+        if (leaderboard == null) return;
+
         const challenger = message.author;
 
         const defender = reader.readUser();
