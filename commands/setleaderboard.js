@@ -1,11 +1,10 @@
 const {
-    renderLeaderboard,
     writeLeaderboard,
     backupLeaderboard,
     createLeaderboardReader
 } = require('../utils');
 
-const lb = require('../leaderboard');
+const Leaderboard = require('../Scoring');
 
 module.exports = {
     name: 'setleaderboard',
@@ -15,7 +14,7 @@ module.exports = {
     adminOnly: true,
     args: true,
     delete: true,
-    usage: '[channel] <players>+',
+    usage: '[channel] <simple <players>+ | ranked>',
     execute(message, args, client) {
         const reader = createLeaderboardReader(message, args, client);
 
@@ -23,26 +22,25 @@ module.exports = {
 
         if (leaderboardChannel == null) return;
 
-        const leaderboard = [];
-
-        while (true) {
-            const user = reader.readUser();
-            if (user == null) {
-                break;
-            }
-            leaderboard.push(user.id);
-        }
-
-        if (leaderboard.length == null)
-            return message.reply('No users were provided.');
-
-        renderLeaderboard(leaderboardChannel, leaderboard);
-
-        console.log('Old Leaderboard:\n' + JSON.stringify(lb));
+        const initType = reader.readText();
 
         backupLeaderboard(message);
 
-        lb.leaderboards[leaderboardChannel] = leaderboard;
+        const leaderboard = Leaderboard(leaderboardChannel, initType);
+
+        if (leaderboard == null) return;
+
+        if (initType == 'simple') {
+            while (true) {
+                const user = reader.readUser();
+                if (user == null) {
+                    break;
+                }
+                leaderboard.add(user, -1);
+            }
+        }
+
+        leaderboard.render();
 
         writeLeaderboard();
     }

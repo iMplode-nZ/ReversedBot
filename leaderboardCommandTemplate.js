@@ -1,11 +1,10 @@
 const {
-    renderLeaderboard,
     writeLeaderboard,
     backupLeaderboard,
     createLeaderboardReader
 } = require('../utils');
 
-const lb = require('../leaderboard');
+const Leaderboard = require('../Scoring');
 
 module.exports = {
     name: 'template',
@@ -26,17 +25,15 @@ module.exports = {
 
         if (leaderboardChannel == null) return;
 
-        const leaderboard = lb.leaderboards[leaderboardChannel];
+        const leaderboard = Leaderboard(leaderboardChannel);
 
         if (leaderboard == null) return message.reply('Invalid leaderboard.');
 
-        backupLeaderboard(lb, message);
+        backupLeaderboard(message);
 
         /* ==============================================
            ================ DO SOMETHING ================
            ============================================== */
-
-        renderLeaderboard(leaderboardChannel, leaderboard, client);
 
         writeLeaderboard();
     }

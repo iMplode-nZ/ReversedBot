@@ -1,6 +1,6 @@
-const { renderLeaderboard, getChannelFromId } = require('../utils');
-
 const lb = require('../leaderboard');
+
+const Leaderboard = require('../Scoring');
 module.exports = {
     name: 'refreshall',
     description: 'Refreshes all leaderboards.',
@@ -11,10 +11,11 @@ module.exports = {
     execute(message) {
         for (const x in lb.leaderboards) {
             if (Object.prototype.hasOwnProperty.call(lb.leaderboards, x)) {
-                const leaderboard = lb.leaderboards[x];
-                const leaderboardChannel = getChannelFromId(x, message.guild);
-                if (leaderboardChannel)
-                    renderLeaderboard(leaderboardChannel, leaderboard);
+                const channel = message.guild.channels.cache.get(x);
+                if (channel == null) continue;
+                const leaderboard = Leaderboard(channel);
+                if (leaderboard == null) continue;
+                leaderboard.render();
             }
         }
     }

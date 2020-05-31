@@ -1,13 +1,10 @@
 const {
-    renderLeaderboard,
     writeLeaderboard,
     backupLeaderboard,
     createLeaderboardReader
 } = require('../utils');
 
-const { maxLeaderboard } = require('../config.json');
-
-const lb = require('../leaderboard.json');
+const Leaderboard = require('../Scoring');
 
 module.exports = {
     name: 'add',
@@ -25,46 +22,23 @@ module.exports = {
 
         if (leaderboardChannel == null) return;
 
-        const leaderboard = lb.leaderboards[leaderboardChannel];
+        const leaderboard = Leaderboard(leaderboardChannel);
 
         if (leaderboard == null) return message.reply('Invalid leaderboard.');
 
         const user = reader.readUser();
 
-        const i = reader.readInt();
-
         if (user == null) return message.reply('Invalid user.');
-
-        const userLocation = leaderboard.indexOf(user.id);
 
         backupLeaderboard(message);
 
-        if (i == null) {
-            if (userLocation == -1) {
-                leaderboard.push(user.id);
-            } else {
-                return message.reply(
-                    'User already in leaderboard. Perhaps you meant to use the third argument?'
-                );
-            }
+        if (leaderboard.type() == 'ranking') {
+            leaderboard.add(user);
         } else {
-            if (userLocation == -1) {
-                leaderboard.splice(i - 1, 0, user.id);
-            } else {
-                if (userLocation >= i) {
-                    leaderboard.splice(userLocation, 1);
-                    leaderboard.splice(i - 1, 0, user.id);
-                } else {
-                    leaderboard.splice(userLocation, 1);
-                    leaderboard.splice(i - 1, 0, user.id);
-                }
-            }
+            const i = reader.readInt();
+            leaderboard.add(user, i == null ? -1 : i);
         }
-
-        if (leaderboard.length > maxLeaderboard)
-            leaderboard.length = maxLeaderboard;
-
-        renderLeaderboard(leaderboardChannel, leaderboard);
+        leaderboard.render();
 
         writeLeaderboard();
     }

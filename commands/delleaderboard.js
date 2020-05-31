@@ -21,7 +21,7 @@ module.exports = {
 
         if (leaderboardChannel == null) return;
 
-        backupLeaderboard(lb, message);
+        backupLeaderboard(message);
 
         lb.leaderboards[leaderboardChannel] = undefined;
 

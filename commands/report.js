@@ -5,13 +5,11 @@ const {
     createLeaderboardReader
 } = require('../utils');
 
-const {
-    maxLeaderboard,
-    reportChannel,
-    challengeHistoryChannel
-} = require('../config.json');
+const { reportChannel, challengeHistoryChannel } = require('../config.json');
 
 const Discord = require('discord.js');
+
+const Leaderboard = require('../Scoring');
 
 const lb = require('../leaderboard');
 
@@ -30,7 +28,7 @@ module.exports = {
 
         if (leaderboardChannel == null) return;
 
-        const leaderboard = lb.leaderboards[leaderboardChannel];
+        const leaderboard = Leaderboard(leaderboardChannel);
 
         if (leaderboard == null) return message.reply('Invalid leaderboard.');
 
@@ -118,7 +116,7 @@ module.exports = {
                 `Challenge has not been accepted by ${defender}. Please contact ${defender} first.`
             );
 
-        backupLeaderboard(lb, message);
+        backupLeaderboard(message);
 
         // Delete Challenge
 
@@ -130,22 +128,15 @@ module.exports = {
 
         // Update Leaderboard
 
-        const winnerLocation = leaderboard.indexOf(winner.id);
-
-        const looserLocation = leaderboard.indexOf(looser.id);
-
-        if (winnerLocation == -1 && looserLocation == -1) {
-            if (leaderboard.length < maxLeaderboard)
-                leaderboard.push(winner.id);
-        } else if (winnerLocation == -1) {
-            leaderboard.splice(looserLocation, 0, winner.id);
-        } else if (looserLocation != -1 && winnerLocation > looserLocation) {
-            leaderboard.splice(winnerLocation, 1);
-            leaderboard.splice(looserLocation, 0, winner.id);
-        }
-
-        if (leaderboard.length > maxLeaderboard)
-            leaderboard.length = maxLeaderboard;
+        leaderboard.resultMatch(
+            winner,
+            looser,
+            challenger,
+            defender,
+            winnerScore,
+            looserScore,
+            forfeit
+        );
 
         // Output Chat Message
 
@@ -191,7 +182,7 @@ module.exports = {
                 )
             );
 
-        renderLeaderboard(leaderboardChannel, leaderboard, client);
+        leaderboard.render();
 
         writeLeaderboard();
     }

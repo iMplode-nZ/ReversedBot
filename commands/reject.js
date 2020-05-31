@@ -23,13 +23,9 @@ module.exports = {
 
         if (leaderboardChannel == null) return;
 
-        const leaderboard = lb.leaderboards[leaderboardChannel];
-
-        if (leaderboard == null) return message.reply('Invalid leaderboard.');
-
         const other = reader.readUser();
 
-        backupLeaderboard(lb, message);
+        backupLeaderboard(message);
 
         let defender = other;
 

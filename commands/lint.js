@@ -16,7 +16,7 @@ module.exports = {
     aliases: [],
     usage: '[channel]',
     execute(message) {
-        backupLeaderboard(lb, message);
+        backupLeaderboard(message);
 
         for (const x in lb.leaderboards) {
             if (Object.prototype.hasOwnProperty.call(lb.leaderboards, x)) {

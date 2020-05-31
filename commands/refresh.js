@@ -1,6 +1,6 @@
-const { renderLeaderboard, createLeaderboardReader } = require('../utils');
+const { createLeaderboardReader } = require('../utils');
 
-const lb = require('../leaderboard');
+const Leaderboard = require('../Scoring');
 module.exports = {
     name: 'refresh',
     description: 'Refreshes the current leaderboard.',
@@ -15,8 +15,8 @@ module.exports = {
 
         if (leaderboardChannel == null) return;
 
-        const leaderboard = lb.leaderboards[leaderboardChannel];
+        const leaderboard = Leaderboard(leaderboardChannel);
 
-        renderLeaderboard(leaderboardChannel, leaderboard);
+        leaderboard.render();
     }
 };

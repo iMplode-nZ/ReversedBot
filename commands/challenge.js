@@ -4,9 +4,9 @@ const {
     createLeaderboardReader
 } = require('../utils');
 
-const { maxDifferenceLeaderboard, maxChallengeNew } = require('../config.json');
-
 const lb = require('../leaderboard');
+
+const Leaderboard = require('../Scoring');
 
 module.exports = {
     name: 'challenge',
@@ -27,12 +27,7 @@ module.exports = {
                     ' To use this correctly, please specify a channel. For example, you may use it by typing `!challenge #just-fight @ReversedBot`.'
             );
 
-        if (lb.leaderboards[channel] == null)
-            return message.reply(
-                `the channel you provided, ${channel} is not a leaderboard channel.`
-            );
-
-        const leaderboard = lb.leaderboards[channel];
+        const leaderboard = Leaderboard(channel);
 
         const challenger = message.author;
 
@@ -48,33 +43,11 @@ module.exports = {
 
         let reason = reader.readUntilEmpty() || '';
 
-        const defenderLocation = leaderboard.indexOf(defender.id);
+        const match = leaderboard.canMatch(message.author, defender);
 
-        const challengerLocation = leaderboard.indexOf(challenger.id);
+        if (match != '') return message.reply(match);
 
-        if (challengerLocation == -1) {
-            if (
-                defenderLocation != -1 &&
-                defenderLocation < leaderboard.length - maxChallengeNew
-            )
-                return message.reply(
-                    `the user that you challenged (${defender}) is too high up on the leaderboard for you to be able to challenge them.`
-                );
-        } else {
-            if (defenderLocation == -1 || defenderLocation > challengerLocation)
-                return message.reply(
-                    `the user that you challenged (${defender}) is below you on the leaderboard, so you can't challenge them.`
-                );
-            else if (
-                defenderLocation <
-                challengerLocation - maxDifferenceLeaderboard
-            )
-                return message.reply(
-                    `the user that you challenged (${defender}) is too high up on the leaderboard for you to be able to challenge them.`
-                );
-        }
-
-        backupLeaderboard(lb, message);
+        backupLeaderboard(message);
 
         const challenges = lb.challenges;
 

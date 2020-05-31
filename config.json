@@ -5,6 +5,13 @@
 	"maxLeaderboard": 15,
 	"maxDifferenceLeaderboard": 3,
 	"maxChallengeNew": 3,
+    "minRank":0,
+    "defaultRank":2,
+    "maxRank": 4,
+    "rankDifference": 0.3,
+    "maxRankGain": 0.3,
+    "forfeitAmount": 4,
+    "averagingAmount": 0.05,
 	"reportChannel": "716069619789463652",
 	"challengeHistoryChannel": "714524600691720244"
 }

@@ -1,11 +1,10 @@
 const {
-    renderLeaderboard,
     writeLeaderboard,
     backupLeaderboard,
     createLeaderboardReader
 } = require('../utils');
 
-const lb = require('../leaderboard');
+const Leaderboard = require('../Scoring');
 
 module.exports = {
     name: 'delete',
@@ -25,22 +24,17 @@ module.exports = {
 
         const user = reader.readUser();
 
-        const leaderboard = lb.leaderboards[leaderboardChannel];
+        const leaderboard = Leaderboard(leaderboardChannel);
 
         if (leaderboard == null) return message.reply('Invalid leaderboard.');
 
         if (user == null) return message.reply('Invalid user.');
 
-        const userLocation = leaderboard.indexOf(user.id);
-
         backupLeaderboard(message);
 
-        if (userLocation == -1)
-            return message.reply('User not in leaderboard, can not delete.');
+        leaderboard.delete(user);
 
-        leaderboard.splice(userLocation, 1);
-
-        renderLeaderboard(leaderboardChannel, leaderboard);
+        leaderboard.render();
 
         writeLeaderboard();
     }
