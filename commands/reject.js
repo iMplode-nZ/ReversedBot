@@ -18,7 +18,7 @@ module.exports = {
     aliases: ['ignore'],
     usage: '[channel] <user>',
     execute(message, args, client) {
-        discardOldChallenges();
+        discardOldChallenges(message.guild);
 
         const reader = createLeaderboardReader(message, args, client);
 

@@ -16,7 +16,7 @@ module.exports = {
     aliases: ['userinfo', '1v1s'],
     usage: '[user]',
     execute(message, args, client) {
-        discardOldChallenges();
+        discardOldChallenges(message.guild);
 
         const reader = createReader(message, args, client);
         let user = reader.readUser();

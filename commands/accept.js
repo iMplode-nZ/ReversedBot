@@ -1,7 +1,8 @@
 const {
     writeLeaderboard,
     backupLeaderboard,
-    createLeaderboardReader
+    createLeaderboardReader,
+    discardOldChallenges
 } = require('../utils');
 
 const lb = require('../leaderboard');
@@ -15,6 +16,8 @@ module.exports = {
     aliases: [],
     usage: '[channel] <user>',
     execute(message, args, client) {
+        discardOldChallenges(message.guild);
+
         const reader = createLeaderboardReader(message, args, client);
 
         const leaderboardChannel = reader.optionalReadLeaderboard();

@@ -22,7 +22,7 @@ module.exports = {
     usage:
         '[channel] <winner> <looser> [forfeit] <winner-score> <looser-score> [text]',
     execute(message, args, client) {
-        discardOldChallenges();
+        discardOldChallenges(message.guild);
 
         const reader = createLeaderboardReader(message, args, client);
 

@@ -181,18 +181,37 @@ function generateChallenge(a, embed) {
     );
 }
 
-function discardOldChallenges() {
+function discardOldChallenges(guild) {
+    const embed = new Discord.MessageEmbed()
+        .setColor('#e8272b')
+        .setTitle('Discarded Challenges:');
+
     const time = Date.now() - require('./config.json').maxChallengeActiveTime;
     for (const x in lb.defends) {
         if (Object.prototype.hasOwnProperty.call(lb.defends, x)) {
-            lb.defends[x] = lb.defends[x].filter(a => a[0] > time);
+            lb.defends[x] = lb.defends[x].filter(a => {
+                if (a[0] > time) {
+                    return true;
+                } else {
+                    return generateChallenge(a, embed);
+                }
+            });
         }
     }
     for (const x in lb.challenges) {
         if (Object.prototype.hasOwnProperty.call(lb.challenges, x)) {
-            lb.challenges[x] = lb.challenges[x].filter(a => a[0] > time);
+            lb.challenges[x] = lb.challenges[x].filter(a => {
+                if (a[0] > time) {
+                    return true;
+                } else {
+                    return generateChallenge(a, embed);
+                }
+            });
         }
     }
+    guild.channels.cache
+        .get(require('./config.json').reportChannel)
+        .send(embed);
 }
 
 module.exports = {
