@@ -36,8 +36,7 @@ function Simple(channel, leaderboard) {
                     defenderLocation != -1 &&
                     defenderLocation < leaderboard.length - maxChallengeNew
                 )
-                    return;
-                `the user that you challenged (${defender}) is too high up on the leaderboard for you to be able to challenge them.`;
+                    return `the user that you challenged (${defender}) is too high up on the leaderboard for you to be able to challenge them.`;
             } else {
                 if (
                     defenderLocation == -1 ||
@@ -48,8 +47,7 @@ function Simple(channel, leaderboard) {
                     defenderLocation <
                     challengerLocation - maxDifferenceLeaderboard
                 )
-                    return;
-                `the user that you challenged (${defender}) is too high up on the leaderboard for you to be able to challenge them.`;
+                    return `the user that you challenged (${defender}) is too high up on the leaderboard for you to be able to challenge them.`;
             }
             return '';
         },

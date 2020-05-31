@@ -12,6 +12,7 @@
     "maxRankGain": 0.3,
     "forfeitAmount": 4,
     "averagingAmount": 0.05,
+    "maxChallengeActiveTime": 172800000,
 	"reportChannel": "716069619789463652",
 	"challengeHistoryChannel": "714524600691720244"
 }

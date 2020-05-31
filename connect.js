@@ -33,6 +33,7 @@ async function webhook(user, channel, useNick = false, shouldSwitch = false) {
         }
     );
     console.log('Created Webhook.');
+    if (x == null) return;
     wh = x;
     connect.output = {
         shouldSwitchChannel: shouldSwitch

@@ -1,8 +1,8 @@
 const {
-    renderLeaderboard,
     writeLeaderboard,
     backupLeaderboard,
-    createLeaderboardReader
+    createLeaderboardReader,
+    discardOldChallenges
 } = require('../utils');
 
 const { reportChannel, challengeHistoryChannel } = require('../config.json');
@@ -22,6 +22,8 @@ module.exports = {
     usage:
         '[channel] <winner> <looser> [forfeit] <winner-score> <looser-score> [text]',
     execute(message, args, client) {
+        discardOldChallenges();
+
         const reader = createLeaderboardReader(message, args, client);
 
         const leaderboardChannel = reader.optionalReadLeaderboard();
@@ -92,13 +94,17 @@ module.exports = {
         let challengeIndex = -1;
         if (lb.challenges[defender.id] != null)
             challengeIndex = lb.challenges[defender.id].findIndex(
-                elem => elem[2] == looser.id
+                elem =>
+                    elem[2] == looser.id &&
+                    elem[1] == leaderboardChannel.toString()
             );
 
         if (challengeIndex == -1 && lb.challenges[looser.id] != null) {
             defender = looser;
             challengeIndex = lb.challenges[defender.id].findIndex(
-                elem => elem[2] == winner.id
+                elem =>
+                    elem[2] == winner.id &&
+                    elem[1] == leaderboardChannel.toString()
             );
         }
 

@@ -181,6 +181,20 @@ function generateChallenge(a, embed) {
     );
 }
 
+function discardOldChallenges() {
+    const time = Date.now() - require('./config.json').maxChallengeActiveTime;
+    for (const x in lb.defends) {
+        if (Object.prototype.hasOwnProperty.call(lb.defends, x)) {
+            lb.defends[x] = lb.defends[x].filter(a => a[0] > time);
+        }
+    }
+    for (const x in lb.challenges) {
+        if (Object.prototype.hasOwnProperty.call(lb.challenges, x)) {
+            lb.challenges[x] = lb.challenges[x].filter(a => a[0] > time);
+        }
+    }
+}
+
 module.exports = {
     getEmoji,
     renderLeaderboard,
@@ -191,5 +205,6 @@ module.exports = {
     createReader,
     createLeaderboardReader,
     generateChallenge,
-    splitFirstWhitespace
+    splitFirstWhitespace,
+    discardOldChallenges
 };

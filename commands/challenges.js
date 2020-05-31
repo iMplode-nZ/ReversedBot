@@ -1,6 +1,10 @@
 const Discord = require('discord.js');
 
-const { createReader, generateChallenge } = require('../utils');
+const {
+    createReader,
+    generateChallenge,
+    discardOldChallenges
+} = require('../utils');
 
 const lb = require('../leaderboard');
 
@@ -12,6 +16,8 @@ module.exports = {
     aliases: ['userinfo', '1v1s'],
     usage: '[user]',
     execute(message, args, client) {
+        discardOldChallenges();
+
         const reader = createReader(message, args, client);
         let user = reader.readUser();
         if (user == null) user = message.author;
