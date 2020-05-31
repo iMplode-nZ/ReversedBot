@@ -147,18 +147,18 @@ function Ranking(channel, leaderboard) {
             }
         },
         canMatch(challenger, defender) {
-            if (r[challenger] == null) this.add(challenger);
-            if (r[defender] == null) this.add(defender);
-            const diff = r[challenger] - r[defender];
-            return diff < rankDifference
-                ? diff > -rankDifference
+            if (r[challenger.id] == null) this.add(challenger);
+            if (r[defender.id] == null) this.add(defender);
+            const diff = r[challenger.id] - r[defender.id];
+            return diff > -rankDifference
+                ? diff < rankDifference
                     ? ''
                     : `${defender}'s rating is too low for you to be able to challenge.`
                 : `${defender} has a too high rating for you to be able to challenge.`;
         },
         resultMatch(winner, looser, challenger, defender, w1, w2, forfeit) {
-            if (r[challenger] == null) this.add(challenger);
-            if (r[defender] == null) this.add(defender);
+            if (r[challenger.id] == null) this.add(challenger);
+            if (r[defender.id] == null) this.add(defender);
             let winnerWins = w1;
             let looserWins = w2;
             if (winnerWins == 0) winnerWins = 0.5;
@@ -168,8 +168,11 @@ function Ranking(channel, leaderboard) {
             const winRatio = Math.log10(winnerWins) - Math.log10(looserWins);
             const expectedWinRatio = r[winner.id] - r[looser.id];
             let winDifference =
-                ((winRatio - expectedWinRatio) * (w1 + w2)) / averagingAmount;
+                (winRatio - expectedWinRatio) * (w1 + w2) * averagingAmount;
+            if ((w1 + w2) * averagingAmount > 1)
+                winDifference = winRatio - expectedWinRatio;
             if (winDifference > maxRankGain) winDifference = maxRankGain;
+            if (winDifference < -maxRankGain) winDifference = maxRankGain;
             r[winner.id] += winDifference;
             r[looser.id] -= winDifference;
             normalize(winner.id);
@@ -226,18 +229,16 @@ function Ranking(channel, leaderboard) {
 function Leaderboard(channel, lbInitType = null) {
     let leaderboard = lb.leaderboards[channel];
 
-    if (leaderboard == null) {
-        if (lbInitType != null && lbInitType.length != null) {
-            lb.leaderboards[channel] = {
-                isRanking: true,
-                rankings: {}
-            };
-            leaderboard = lb[channel];
-        } else if (lbInitType == 'simple') {
-            lb.leaderboards[channel] = [];
-            leaderboard = lb.leaderboards[channel];
-        } else return leaderboard;
-    }
+    if (lbInitType == 'ranked') {
+        lb.leaderboards[channel] = {
+            isRanking: true,
+            rankings: {}
+        };
+        leaderboard = lb.leaderboards[channel];
+    } else if (lbInitType == 'simple') {
+        lb.leaderboards[channel] = [];
+        leaderboard = lb.leaderboards[channel];
+    } else if (leaderboard == null) return leaderboard;
 
     return (leaderboard.isRanking == null ? Simple : Ranking)(
         channel,

@@ -116,6 +116,10 @@ module.exports = {
                 `Challenge has not been accepted by ${defender}. Please contact ${defender} first.`
             );
 
+        const challengerScore =
+            challenger == winner ? winnerScore : looserScore;
+        const defenderScore = challenger == winner ? looserScore : winnerScore;
+
         backupLeaderboard(message);
 
         // Delete Challenge
@@ -151,9 +155,11 @@ module.exports = {
                 .setColor('#1dcfc9')
                 .setTimestamp(ts)
                 .setTitle(
-                    `Result for Challenge: ${getName(challenger)} vs ${getName(
+                    `Result for Challenge: ${getName(
+                        challenger
+                    )} ${challengerScore} vs ${getName(
                         defender
-                    )} in ${leaderboardChannel.name}`
+                    )} ${defenderScore} in ${leaderboardChannel.name}`
                 )
                 .setDescription(text);
 

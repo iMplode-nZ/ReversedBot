@@ -26,6 +26,8 @@ module.exports = {
 
         backupLeaderboard(message);
 
+        console.log(initType);
+
         const leaderboard = Leaderboard(leaderboardChannel, initType);
 
         if (leaderboard == null) return;
