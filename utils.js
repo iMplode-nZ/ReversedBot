@@ -193,7 +193,8 @@ function discardOldChallenges(guild) {
                 if (a[0] > time) {
                     return true;
                 } else {
-                    return generateChallenge(a, embed);
+                    generateChallenge(a, embed);
+                    return false;
                 }
             });
         }
@@ -204,14 +205,16 @@ function discardOldChallenges(guild) {
                 if (a[0] > time) {
                     return true;
                 } else {
-                    return generateChallenge(a, embed);
+                    generateChallenge(a, embed);
+                    return false;
                 }
             });
         }
     }
-    guild.channels.cache
-        .get(require('./config.json').reportChannel)
-        .send(embed);
+    if (embed.fields.length > 0)
+        guild.channels.cache
+            .get(require('./config.json').reportChannel)
+            .send(embed);
 }
 
 module.exports = {
