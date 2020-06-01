@@ -196,6 +196,8 @@ module.exports = {
 
         leaderboard.render();
 
+        message.channel.send('Successfully Reported.');
+
         writeLeaderboard();
     }
 };
