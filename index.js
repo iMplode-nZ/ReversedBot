@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const { prefix, token, owner } = require('./config.json');
+const { prefix, owner } = require('./config.json');
 const Discord = require('discord.js');
 const { splitFirstWhitespace } = require('./utils');
 const connect = require('./connect');
@@ -21,7 +21,7 @@ client.once('ready', () => {
 
 client.on('message', messageHandler);
 
-client.login(token);
+client.login(require('./config-private.json').token);
 
 function messageHandler(message) {
     if (message.author.bot) return;
